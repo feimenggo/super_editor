@@ -95,6 +95,9 @@ class Editor implements RequestDispatcher {
   List<CommandTransaction> get history => List.from(_history);
   final _history = <CommandTransaction>[];
 
+  bool get undoable => _history.length > 1;
+  bool get redoable => _future.isNotEmpty;
+
   /// A list of editor transactions that were undone since the last time a change was
   /// made.
   ///
@@ -204,6 +207,7 @@ class Editor implements RequestDispatcher {
           case TransactionMerge.doNotMerge:
             // Don't alter the transaction history, just add the new transaction to the history.
             _history.add(_transaction!);
+            _future.clear();
           case TransactionMerge.mergeOnTop:
             // Merge this transaction with the transaction just before it. This is used, for example,
             // to group repeated text input into a single undoable transaction.
