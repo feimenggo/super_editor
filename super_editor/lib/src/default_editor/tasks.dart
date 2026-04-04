@@ -768,9 +768,9 @@ class ConvertParagraphToTaskCommand extends EditCommand {
   void execute(EditContext context, CommandExecutor executor) {
     final document = context.document;
     final existingNode = document.getNodeById(nodeId);
-    if (existingNode is! ParagraphNode) {
+    if (existingNode is! TextNode) {
       editorOpsLog.warning(
-          "Tried to convert ParagraphNode with ID '$nodeId' to TaskNode, but that node has the wrong type: ${existingNode.runtimeType}");
+          "Tried to convert TextNode with ID '$nodeId' to TaskNode, but that node has the wrong type: ${existingNode.runtimeType}");
       return;
     }
 
