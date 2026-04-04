@@ -282,11 +282,11 @@ class DefaultIOSSuperMessageToolbar extends StatelessWidget {
         children: [
           _buildButton(
             onPressed: _copy,
-            title: 'Copy',
+            title: '复制',
           ),
           _buildButton(
             onPressed: _selectAll,
-            title: 'Select All',
+            title: '全选',
           ),
         ],
       ),

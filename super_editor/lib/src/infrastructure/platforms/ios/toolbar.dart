@@ -50,17 +50,17 @@ class IOSTextEditingFloatingToolbar extends StatelessWidget {
           if (onCutPressed != null)
             _buildButton(
               onPressed: onCutPressed!,
-              title: 'Cut',
+              title: '剪切',
             ),
           if (onCopyPressed != null)
             _buildButton(
               onPressed: onCopyPressed!,
-              title: 'Copy',
+              title: '复制',
             ),
           if (onPastePressed != null)
             _buildButton(
               onPressed: onPastePressed!,
-              title: 'Paste',
+              title: '粘贴',
             ),
         ],
       ),

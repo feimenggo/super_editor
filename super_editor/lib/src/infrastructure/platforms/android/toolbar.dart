@@ -81,22 +81,22 @@ class _AndroidTextEditingFloatingToolbarState extends State<AndroidTextEditingFl
       if (widget.onCutPressed != null)
         _ButtonViewModel(
           onPressed: widget.onCutPressed!,
-          title: 'Cut',
+          title: '剪切',
         ),
       if (widget.onCopyPressed != null)
         _ButtonViewModel(
           onPressed: widget.onCopyPressed!,
-          title: 'Copy',
+          title: '复制',
         ),
       if (widget.onPastePressed != null)
         _ButtonViewModel(
           onPressed: widget.onPastePressed!,
-          title: 'Paste',
+          title: '粘贴',
         ),
       if (widget.onSelectAllPressed != null)
         _ButtonViewModel(
           onPressed: widget.onSelectAllPressed!,
-          title: 'Select All',
+          title: '全选',
         ),
     ];
 

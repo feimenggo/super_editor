@@ -153,9 +153,9 @@ final taskStyles = StyleRule(
 /// Builds [TaskComponentViewModel]s and [TaskComponent]s for every
 /// [TaskNode] in a document.
 class TaskComponentBuilder implements ComponentBuilder {
-  TaskComponentBuilder(this._editor);
+  TaskComponentBuilder(this.editor);
 
-  final Editor _editor;
+  final Editor editor;
 
   @override
   TaskComponentViewModel? createViewModel(Document document, DocumentNode node) {
@@ -172,7 +172,7 @@ class TaskComponentBuilder implements ComponentBuilder {
       indent: node.indent,
       isComplete: node.isComplete,
       setComplete: (bool isComplete) {
-        _editor.execute([
+        editor.execute([
           ChangeTaskCompletionRequest(
             nodeId: node.id,
             isComplete: isComplete,
@@ -340,20 +340,20 @@ class TaskComponent extends StatefulWidget {
   final bool showDebugPaint;
 
   @override
-  State<TaskComponent> createState() => _TaskComponentState();
+  State<TaskComponent> createState() => TaskComponentState();
 }
 
-class _TaskComponentState extends State<TaskComponent> with ProxyDocumentComponent<TaskComponent>, ProxyTextComposable {
-  final _textKey = GlobalKey();
+class TaskComponentState extends State<TaskComponent> with ProxyDocumentComponent<TaskComponent>, ProxyTextComposable {
+  final textKey = GlobalKey();
 
   @override
-  GlobalKey<State<StatefulWidget>> get childDocumentComponentKey => _textKey;
+  GlobalKey<State<StatefulWidget>> get childDocumentComponentKey => textKey;
 
   @override
   TextComposable get childTextComposable => childDocumentComponentKey.currentState as TextComposable;
 
   /// Computes the [TextStyle] for this task's inner [TextComponent].
-  TextStyle _computeStyles(Set<Attribution> attributions) {
+  TextStyle computeStyles(Set<Attribution> attributions) {
     // Show a strikethrough across the entire task if it's complete.
     final style = widget.viewModel.textStyleBuilder(attributions);
     return widget.viewModel.isComplete
@@ -392,13 +392,13 @@ class _TaskComponentState extends State<TaskComponent> with ProxyDocumentCompone
           ),
           Expanded(
             child: TextComponent(
-              key: _textKey,
+              key: textKey,
               text: widget.viewModel.text,
               textDirection: widget.viewModel.textDirection,
               textAlign: widget.viewModel.textAlignment,
               maxLines: widget.viewModel.maxLines,
               overflow: widget.viewModel.overflow,
-              textStyleBuilder: _computeStyles,
+              textStyleBuilder: computeStyles,
               inlineWidgetBuilders: widget.viewModel.inlineWidgetBuilders,
               textSelection: widget.viewModel.selection,
               selectionColor: widget.viewModel.selectionColor,
