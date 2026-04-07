@@ -9,7 +9,6 @@ import 'package:super_editor/src/core/document_composer.dart';
 import 'package:super_editor/src/default_editor/paragraph.dart';
 import 'package:super_editor/src/default_editor/text.dart';
 import 'package:super_editor/src/infrastructure/_logging.dart';
-import 'package:uuid/uuid.dart';
 
 /// Editor for a document editing experience.
 ///
@@ -26,7 +25,7 @@ import 'package:uuid/uuid.dart';
 ///  - [EditReaction] - (optionally) requests more changes after some original change.
 ///  - [EditListener] - is notified of all changes made by an [Editor].
 class Editor implements RequestDispatcher {
-  static const Uuid _uuid = Uuid();
+  // static const Uuid _uuid = Uuid();
 
   /// Service locator key to obtain a [Document] from [find], if a [Document]
   /// is available in the [EditContext].
@@ -43,7 +42,8 @@ class Editor implements RequestDispatcher {
   /// Generates a new ID for a [DocumentNode].
   ///
   /// Each generated node ID is universally unique.
-  static String createNodeId() => _uuid.v4();
+  static String createNodeId() => '${time++}';
+  static int time = DateTime.now().millisecondsSinceEpoch;
 
   /// Constructs an [Editor] with:
   ///  - [editables], which contains all artifacts that will be mutated by [EditCommand]s, such
