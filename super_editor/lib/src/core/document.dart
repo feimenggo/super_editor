@@ -432,6 +432,7 @@ abstract class DocumentNode {
 
   /// Returns all metadata attached to this [DocumentNode].
   Map<String, dynamic> get metadata => Map.from(_metadata);
+  Map<String, dynamic> get internalMetadata => _metadata;
 
   late final Map<String, dynamic> _metadata;
 
