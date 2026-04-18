@@ -102,6 +102,7 @@ class SuperEditor extends StatefulWidget {
   /// visual components, text styles, and user interaction.
   SuperEditor({
     Key? key,
+    this.layoutWrapper,
     this.focusNode,
     this.autofocus = false,
     this.tapRegionGroupId,
@@ -153,6 +154,8 @@ class SuperEditor extends StatefulWidget {
           const UnknownComponentBuilder(),
         ],
         super(key: key);
+
+  final Widget Function(BuildContext context, Widget child)? layoutWrapper;
 
   /// [FocusNode] for the entire `SuperEditor`.
   final FocusNode? focusNode;
@@ -742,6 +745,7 @@ class SuperEditorState extends State<SuperEditor> {
             restorePreviousSelectionOnGainFocus: widget.selectionPolicies.restorePreviousSelectionOnGainFocus,
             clearSelectionWhenEditorLosesFocus: widget.selectionPolicies.clearSelectionWhenEditorLosesFocus,
             child: DocumentScaffold(
+              layoutWrapper: widget.layoutWrapper,
               documentLayoutLink: _documentLayoutLink,
               documentLayoutKey: _docLayoutKey,
               viewportDecorationBuilder: _buildPlatformSpecificViewportDecorations,

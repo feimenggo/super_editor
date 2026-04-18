@@ -15,6 +15,7 @@ import 'package:super_editor/src/infrastructure/documents/document_scroller.dart
 class DocumentScaffold<ContextType> extends StatefulWidget {
   const DocumentScaffold({
     super.key,
+    this.layoutWrapper,
     required this.documentLayoutLink,
     required this.documentLayoutKey,
     required this.viewportDecorationBuilder,
@@ -30,6 +31,8 @@ class DocumentScaffold<ContextType> extends StatefulWidget {
     this.overlays = const [],
     this.debugPaint = const DebugPaintConfig(),
   });
+
+  final Widget Function(BuildContext context, Widget child)? layoutWrapper;
 
   /// [LayerLink] that's is attached to the document layout.
   final LayerLink documentLayoutLink;
@@ -136,6 +139,7 @@ class _DocumentScaffoldState extends State<DocumentScaffold> {
     return SliverContentLayers(
       content: (onBuildScheduled) => SingleColumnDocumentLayout(
         key: widget.documentLayoutKey,
+        layoutWrapper: widget.layoutWrapper,
         presenter: widget.presenter,
         componentBuilders: widget.componentBuilders,
         onBuildScheduled: onBuildScheduled,

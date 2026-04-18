@@ -27,12 +27,15 @@ import '_presenter.dart';
 class SingleColumnDocumentLayout extends StatefulWidget {
   const SingleColumnDocumentLayout({
     Key? key,
+    this.layoutWrapper,
     required this.presenter,
     required this.componentBuilders,
     this.onBuildScheduled,
     this.wrapWithSliverAdapter = true,
     this.showDebugPaint = false,
   }) : super(key: key);
+
+  final Widget Function(BuildContext context, Widget child)? layoutWrapper;
 
   /// Presenter that provides a view model for a complete single-column
   /// document layout.
@@ -724,6 +727,10 @@ class _SingleColumnDocumentLayoutState extends State<SingleColumnDocumentLayout>
         children: _buildDocComponents(),
       ),
     );
+
+    if (widget.layoutWrapper != null) {
+      result = widget.layoutWrapper!.call(context, result);
+    }
 
     if (widget.wrapWithSliverAdapter) {
       result = SliverToBoxAdapter(
