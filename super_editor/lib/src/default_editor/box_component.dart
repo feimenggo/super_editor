@@ -296,10 +296,12 @@ class SelectableBox extends StatelessWidget {
   const SelectableBox({
     Key? key,
     this.selection,
+    this.ignoring = true,
     required this.selectionColor,
     required this.child,
   }) : super(key: key);
 
+  final bool ignoring;
   final UpstreamDownstreamNodeSelection? selection;
   final Color selectionColor;
   final Widget child;
@@ -311,6 +313,7 @@ class SelectableBox extends StatelessWidget {
     return MouseRegion(
       cursor: SystemMouseCursors.basic,
       child: IgnorePointer(
+        ignoring: ignoring,
         child: DecoratedBox(
           decoration: BoxDecoration(
             color: isSelected ? selectionColor.withValues(alpha: 0.5) : Colors.transparent,
