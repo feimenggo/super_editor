@@ -143,7 +143,8 @@ class UpdateComposerTextStylesReaction extends EditReaction {
     if (textPosition.offset == 0) {
       // The inserted text is at the very beginning of the text blob. Therefore, we should apply the
       // same attributions to the inserted text, as the text that immediately follows the inserted text.
-      offsetWithAttributionsToExtend = textPosition.offset + 1;
+      // offsetWithAttributionsToExtend = textPosition.offset + 1;
+      offsetWithAttributionsToExtend = 0; // 如果光标在开头，textPosition.offset + 1，会取到2位置的样式
     } else {
       // The inserted text is NOT at the very beginning of the text blob. Therefore, we should apply the
       // same attributions to the inserted text, as the text that immediately precedes the inserted text.
