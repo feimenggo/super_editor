@@ -98,21 +98,25 @@ class _SelectionLeadersDocumentLayerState
     }
 
     if (documentSelection.isCollapsed) {
+      final rectForSelection = documentLayout.getRectForPosition(documentSelection.extent)!;
       return DocumentSelectionLayout(
-        caret: documentLayout.getRectForPosition(documentSelection.extent)!,
+        caret: rectForSelection,
+        caretCenter: rectForSelection,
       );
     } else {
+      final rectForSelection = documentLayout.getRectForSelection(
+        documentSelection.base,
+        documentSelection.extent,
+      );
       return DocumentSelectionLayout(
+        caretCenter: rectForSelection,
         upstream: documentLayout.getRectForPosition(
           widget.document.selectUpstreamPosition(documentSelection.base, documentSelection.extent),
         )!,
         downstream: documentLayout.getRectForPosition(
           widget.document.selectDownstreamPosition(documentSelection.base, documentSelection.extent),
         )!,
-        expandedSelectionBounds: documentLayout.getRectForSelection(
-          documentSelection.base,
-          documentSelection.extent,
-        ),
+        expandedSelectionBounds: rectForSelection,
       );
     }
   }
@@ -125,7 +129,22 @@ class _SelectionLeadersDocumentLayerState
 
     return IgnorePointer(
       child: Stack(
+        alignment: Alignment.center,
         children: [
+          if (selectionLayout.caretCenter != null)
+            Positioned(
+              top: selectionLayout.caretCenter!.top,
+              height: selectionLayout.caretCenter!.height,
+              child: Leader(
+                link: widget.links.caretCenterLink,
+                child: widget.showDebugLeaderBounds
+                    ? DecoratedBox(
+                  decoration: BoxDecoration(
+                      border: Border.all(width: 4, color: const Color(0xFFFF0000))),
+                )
+                    : null,
+              ),
+            ),
           if (selectionLayout.caret != null)
             Positioned(
               top: selectionLayout.caret!.top,
@@ -194,12 +213,14 @@ class _SelectionLeadersDocumentLayerState
 class DocumentSelectionLayout {
   DocumentSelectionLayout({
     this.caret,
+    this.caretCenter,
     this.upstream,
     this.downstream,
     this.expandedSelectionBounds,
   });
 
   final Rect? caret;
+  final Rect? caretCenter;
   final Rect? upstream;
   final Rect? downstream;
   final Rect? expandedSelectionBounds;
@@ -210,11 +231,13 @@ class DocumentSelectionLayout {
 class SelectionLayerLinks {
   SelectionLayerLinks({
     LeaderLink? caretLink,
+    LeaderLink? caretCenterLink,
     LeaderLink? upstreamLink,
     LeaderLink? downstreamLink,
     LeaderLink? expandedSelectionBoundsLink,
   }) {
     this.caretLink = caretLink ?? LeaderLink();
+    this.caretCenterLink = caretCenterLink ?? LeaderLink();
     this.upstreamLink = upstreamLink ?? LeaderLink();
     this.downstreamLink = downstreamLink ?? LeaderLink();
     this.expandedSelectionBoundsLink = expandedSelectionBoundsLink ?? LeaderLink();
@@ -223,6 +246,7 @@ class SelectionLayerLinks {
   /// [LayerLink] that's connected to a rectangle at the collapsed selection caret
   /// position.
   late final LeaderLink caretLink;
+  late final LeaderLink caretCenterLink;
 
   /// [LayerLink] that's connected to a rectangle at the expanded selection upstream
   /// position.
