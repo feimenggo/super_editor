@@ -900,6 +900,7 @@ TextStyle readOnlyDefaultStyleBuilder(Set<Attribution> attributions) {
       newStyle = newStyle.copyWith(
         color: Colors.lightBlue,
         decoration: TextDecoration.underline,
+        decorationColor: Colors.lightBlue,
       );
     }
   }
