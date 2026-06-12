@@ -108,7 +108,9 @@ MutableDocument deserializeMarkdownToDocument(
   final hangingEmptyLines = markdownLines.reversed.takeWhile((line) => _blankLinePattern.hasMatch(line.content));
   if (hangingEmptyLines.isNotEmpty && documentNodes.lastOrNull is ListItemNode) {
     for (var i = 0; i < hangingEmptyLines.length ~/ 2; i++) {
-      documentNodes.add(ParagraphNode(id: Editor.createNodeId(), text: AttributedText()));
+      documentNodes.add(
+        ParagraphNode(id: Editor.createNodeId(), text: AttributedText()),
+      );
     }
   }
 
@@ -213,13 +215,25 @@ class _MarkdownToDocument implements md.NodeVisitor {
         if (blockImage != null) {
           _addImage(blockImage);
         } else {
-          final attributedText = parseInlineMarkdown(
-            element.textContent,
-            inlineMarkdownSyntaxes: inlineMarkdownSyntaxes,
-            inlineHtmlSyntaxes: inlineHtmlSyntaxes,
-            encodeHtml: encodeHtml,
-          );
-          _addParagraph(attributedText, element.attributes);
+          final captionAndImage = _maybeParseImageWithCaption(element.textContent);
+          if (captionAndImage != null) {
+            final captionText = parseInlineMarkdown(
+              captionAndImage.caption,
+              inlineMarkdownSyntaxes: inlineMarkdownSyntaxes,
+              inlineHtmlSyntaxes: inlineHtmlSyntaxes,
+              encodeHtml: encodeHtml,
+            );
+            _addParagraph(captionText, element.attributes);
+            _addImage(captionAndImage.image);
+          } else {
+            final attributedText = parseInlineMarkdown(
+              element.textContent,
+              inlineMarkdownSyntaxes: inlineMarkdownSyntaxes,
+              inlineHtmlSyntaxes: inlineHtmlSyntaxes,
+              encodeHtml: encodeHtml,
+            );
+            _addParagraph(attributedText, element.attributes);
+          }
         }
 
         break;
@@ -328,28 +342,27 @@ class _MarkdownToDocument implements md.NodeVisitor {
         break;
     }
 
-    final textAlign = element.attributes['textAlign'];
     _content.add(
       ParagraphNode(
         id: Editor.createNodeId(),
         text: _parseInlineText(element.textContent),
         metadata: {
           'blockType': headerAttribution,
-          'textAlign': textAlign,
+          if (element.attributes['textAlign'] != null) //
+            'textAlign': element.attributes['textAlign'],
         },
       ),
     );
   }
 
   void _addParagraph(AttributedText attributedText, Map<String, String> attributes) {
-    final textAlign = attributes['textAlign'];
-
     _content.add(
       ParagraphNode(
         id: Editor.createNodeId(),
         text: attributedText,
         metadata: {
-          'textAlign': textAlign,
+          if (attributes['textAlign'] != null) //
+            'textAlign': attributes['textAlign'],
         },
       ),
     );
@@ -479,6 +492,25 @@ class _MarkdownToDocument implements md.NodeVisitor {
       markdown,
       syntax: syntax,
     );
+  }
+
+  /// If the last line of [markdown] is a block image and there is at least one
+  /// preceding line (the caption), returns a [_CaptionAndImage] containing the
+  /// caption text and the parsed image. Otherwise returns `null`.
+  _CaptionAndImage? _maybeParseImageWithCaption(String markdown) {
+    final newlineIndex = markdown.lastIndexOf('\n');
+    if (newlineIndex < 0) {
+      return null;
+    }
+
+    final lastLine = markdown.substring(newlineIndex + 1);
+    final image = _maybeParseBlockImage(lastLine);
+    if (image == null) {
+      return null;
+    }
+
+    final caption = markdown.substring(0, newlineIndex);
+    return _CaptionAndImage(caption: caption, image: image);
   }
 }
 
@@ -840,6 +872,13 @@ class _HeaderWithAlignmentSyntax extends md.BlockSyntax {
         return 'left';
     }
   }
+}
+
+class _CaptionAndImage {
+  const _CaptionAndImage({required this.caption, required this.image});
+
+  final String caption;
+  final _MarkdownImage image;
 }
 
 class _MarkdownImage {
