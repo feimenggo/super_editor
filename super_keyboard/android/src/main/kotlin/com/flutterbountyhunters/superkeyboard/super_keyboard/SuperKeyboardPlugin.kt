@@ -163,9 +163,10 @@ class SuperKeyboardPlugin: FlutterPlugin, ActivityAware, DefaultLifecycleObserve
     ViewCompat.setOnApplyWindowInsetsListener(mainView!!, this)
 
     // Track keyboard fully open, fully closed, and height.
+    // 将 DISPATCH_MODE_STOP 改为 DISPATCH_MODE_CONTINUE_ON_SUBTREE，让键盘事件继续透传给 FlutterView
     ViewCompat.setWindowInsetsAnimationCallback(
       mainView!!,
-      object : WindowInsetsAnimationCompat.Callback(DISPATCH_MODE_STOP) {
+      object : WindowInsetsAnimationCompat.Callback(DISPATCH_MODE_CONTINUE_ON_SUBTREE) {
         override fun onPrepare(
           animation: WindowInsetsAnimationCompat
         ) {
